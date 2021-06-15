@@ -877,17 +877,25 @@ ngx_rtmp_hls_get_fragment_datetime(ngx_rtmp_session_t *s, uint64_t ts)
         msec += (ts / 90);
         ngx_gmtime(msec / 1000, &tm);
 
-        datetime->data = (u_char *) ngx_pcalloc(s->connection->pool, ngx_cached_http_log_iso8601.len * sizeof(u_char));
-        (void) ngx_sprintf(datetime->data, "%4d-%02d-%02dT%02d:%02d:%02d-00:00",
+        datetime->data = (u_char *) ngx_pcalloc(s->connection->pool, ngx_cached_http_log_iso8601.len * sizeof(u_char) + 4);
+        (void) ngx_sprintf(datetime->data, "%4d-%02d-%02dT%02d:%02d:%02d.%03d-00:00",
                            tm.ngx_tm_year, tm.ngx_tm_mon,
                            tm.ngx_tm_mday, tm.ngx_tm_hour,
-                           tm.ngx_tm_min, tm.ngx_tm_sec);
+                           tm.ngx_tm_min, tm.ngx_tm_sec,
+                           ngx_cached_time->msec);
         datetime->len = ngx_cached_http_log_iso8601.len;
         return datetime;
 
     case NGX_RTMP_HLS_DATETIME_SYSTEM:
-        datetime->data = (u_char *) ngx_pcalloc(s->connection->pool, ngx_cached_http_log_iso8601.len * sizeof(u_char));
-        *ngx_cpymem(&datetime->data, (const void *) &ngx_cached_http_log_iso8601.data, ngx_cached_http_log_iso8601.len)=0;
+        msec = ngx_cached_time->sec * 1000 + ngx_cached_time->msec;
+        ngx_gmtime(msec / 1000, &tm);
+
+        datetime->data = (u_char *) ngx_pcalloc(s->connection->pool, ngx_cached_http_log_iso8601.len * sizeof(u_char) + 4);
+        (void) ngx_sprintf(datetime->data, "%4d-%02d-%02dT%02d:%02d:%02d.%03d-00:00",
+                           tm.ngx_tm_year, tm.ngx_tm_mon,
+                           tm.ngx_tm_mday, tm.ngx_tm_hour,
+                           tm.ngx_tm_min, tm.ngx_tm_sec,
+                           ngx_cached_time->msec);
         datetime->len = ngx_cached_http_log_iso8601.len;
         return datetime;
 
