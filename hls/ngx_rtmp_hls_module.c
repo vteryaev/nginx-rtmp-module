@@ -888,6 +888,8 @@ ngx_rtmp_hls_get_fragment_datetime(ngx_rtmp_session_t *s, uint64_t ts)
 
     case NGX_RTMP_HLS_DATETIME_SYSTEM:
         msec = ngx_cached_time->sec * 1000 + ngx_cached_time->msec;
+        /* Correct time by fragment length. Make it reflective to start of fragment instead of end of fragment */
+        msec = msec - hacf->fraglen;
         ngx_gmtime(msec / 1000, &tm);
 
         datetime->data = (u_char *) ngx_pcalloc(s->connection->pool, (ngx_cached_http_log_iso8601.len + 4) * sizeof(u_char));
