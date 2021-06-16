@@ -882,7 +882,7 @@ ngx_rtmp_hls_get_fragment_datetime(ngx_rtmp_session_t *s, uint64_t ts)
                            tm.ngx_tm_year, tm.ngx_tm_mon,
                            tm.ngx_tm_mday, tm.ngx_tm_hour,
                            tm.ngx_tm_min, tm.ngx_tm_sec,
-                           ngx_cached_time->msec);
+                           msec % 1000);
         datetime->len = ngx_cached_http_log_iso8601.len + 4;
         return datetime;
 
@@ -895,7 +895,7 @@ ngx_rtmp_hls_get_fragment_datetime(ngx_rtmp_session_t *s, uint64_t ts)
                            tm.ngx_tm_year, tm.ngx_tm_mon,
                            tm.ngx_tm_mday, tm.ngx_tm_hour,
                            tm.ngx_tm_min, tm.ngx_tm_sec,
-                           ngx_cached_time->msec);
+                           msec % 1000);
         datetime->len = ngx_cached_http_log_iso8601.len + 4;
         return datetime;
 
